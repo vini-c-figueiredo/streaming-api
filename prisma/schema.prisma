@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  name          String
+  email         String          @unique
+  phone         String          @unique
+  password      String
+  nivel         Int
+  UserStreaming UserStreaming[]
+  PaymentConf   PaymentConf[]
+  UserFaturas   UserFaturas[]
+  CreditUser    CreditUser[]
+}
+
+model Streaming {
+  id            Int             @id @default(autoincrement())
+  name          String          @unique
+  Price         Float
+  Link          String
+  UserStreaming UserStreaming[]
+}
+
+model UserStreaming {
+  id          Int       @id @default(autoincrement())
+  IdUser      String
+  User        User      @relation(fields: [IdUser], references: [id], onDelete: Cascade)
+  StreamingId Int
+  Streaming   Streaming @relation(fields: [StreamingId], references: [id], onDelete: Cascade)
+}
+
+model PaymentConf {
+  id             Int    @id @default(autoincrement())
+  PixKey         String
+  IdUser         String
+  DataVencimento Int
+  User           User   @relation(fields: [IdUser], references: [id], onDelete: Cascade)
+}
+
+model UserFaturas {
+  id             Int      @id @default(autoincrement())
+  IdUser         String
+  Price          Float
+  Status         String
+  DataVencimento DateTime @db.Date
+  transactionId  String?
+  RelationUser   User     @relation(fields: [IdUser], references: [id], onDelete: Cascade)
+}
+
+model CreditUser {
+  id           Int    @id @default(autoincrement())
+  IdUser       String
+  RelationUser User   @relation(fields: [IdUser], references: [id], onDelete: Cascade)
+  Credit       Float
+}
