@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDTO } from './dto/create-user.dto';
+import { ReturnUserDTO } from './dto/return-user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -18,7 +19,7 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
-  async getUsers(@Query('email') email?: string, @Query('id') id?: string) {
+  async getUsers(@Query('email') email?: string, @Query('id') id?: string): Promise<ReturnUserDTO | ReturnUserDTO[] | null> {
     if (email && id) {
       throw new HttpException('You must provide either an email or an id, not both.', HttpStatus.BAD_REQUEST);
     }
