@@ -22,7 +22,7 @@ export class UserService {
             throw new HttpException('An error occurred while creating the user', HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return { message: 'User created.' }
+        return { message: 'User created successfully' }
     }
 
     async getAllUsers(): Promise<ReturnUserDTO[]> {
@@ -40,7 +40,7 @@ export class UserService {
         return rest;
     }
 
-    async getUserByEmailPassword(email: string): Promise<ReturnUserPassDTO | null> {
+    async getUserByEmailWithPassword(email: string): Promise<ReturnUserPassDTO | null> {
         return await this.prisma.user.findUnique({ where: { email: email } })
     }
 
@@ -50,7 +50,32 @@ export class UserService {
         return rest;
     }
 
-    async deleteUserById(id: string): Promise<void> {
-        await this.prisma.user.delete({ where: { id: id } });
+    async getUserLevel(id: string): Promise<number> {
+        const response = await this.prisma.user.findUnique({ where: { id: id } })
+        const { nivel } = response;
+
+        return nivel;
     }
+
+    async deleteUserById(id: string): Promise<{ message: string }> {
+        try {
+            const streaming = await this.getUserById(id);
+
+            if (!streaming) {
+                throw new HttpException('Streaming not found', HttpStatus.NOT_FOUND);
+            }
+
+            await this.prisma.user.delete({
+                where: { id },
+            });
+
+            return { message: 'Streaming deleted successfully' };
+        } catch (error) {
+            throw new HttpException(
+                'An error occurred while deleting the streaming',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
 }

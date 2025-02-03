@@ -13,17 +13,17 @@ export class AuthService {
     ) { }
 
     async validateUser(email: string, password: string): Promise<ReqAuthDTO> {
-        const user = await this.usersService.getUserByEmailPassword(email);
+        const user = await this.usersService.getUserByEmailWithPassword(email);
         if (user && (await bcrypt.compare(password, user.password))) {
-            const { email, id } = user;
-            const response = { email: email, id: id }
+            const { email, id, nivel } = user;
+            const response = { email: email, id: id, userLevel: nivel }
             return response;
         }
         throw new UnauthorizedException('Credenciais inválidas');
     }
 
     async login(user: ReqAuthDTO): Promise<returnTokenDTO> {
-        const payload = { email: user.email, sub: user.id };
+        const payload = { email: user.email, id: user.id, userLevel: user.userLevel };
         return {
             id: user.id,
             access_token: this.jwtService.sign(payload)

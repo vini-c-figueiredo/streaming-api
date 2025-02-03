@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/JWT-auth.guard';
 import { crudModules } from './CRUD';
+import { UserLevelGuard } from './global/guards/user-level.guard';
 import { PrismaService } from './global/prisma/prisma.service';
 
 @Module({
@@ -12,6 +13,10 @@ import { PrismaService } from './global/prisma/prisma.service';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: UserLevelGuard,
     },
   ],
 })

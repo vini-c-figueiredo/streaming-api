@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { IsNotEmpty } from "class-validator"
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty } from "class-validator";
 
 export class ReqAuthDTO {
     @ApiProperty({
@@ -13,4 +13,6 @@ export class ReqAuthDTO {
     })
     @IsNotEmpty()
     id: string
+
+    userLevel: number;
 }
