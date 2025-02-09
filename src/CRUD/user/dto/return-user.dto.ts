@@ -3,30 +3,41 @@ import { IsEmail, IsInt, IsString } from 'class-validator';
 
 export class ReturnUserDTO {
     @ApiProperty({
-        description: 'id User',
+        example: '55ccx322-11e7-49je-8a07-96069c60eg36',
+        description: 'id do usuário',
     })
     id: string;
 
     @ApiProperty({
-        description: 'name User',
+        example: 'José',
+        description: 'nome do usuário',
     })
     @IsString()
     name: string;
 
     @ApiProperty({
-        description: 'email User',
+        example: 'Jose@email.com',
+        description: 'email do usuário',
     })
     @IsEmail()
     email: string;
 
     @ApiProperty({
-        description: 'phone User',
+        example: '16955602239',
+        description: 'phone do usuário',
     })
     @IsString()
     phone: string;
 
     @ApiProperty({
-        description: 'level User',
+        description: 'senha do usuário',
+    })
+    @IsString()
+    password?: string;
+
+    @ApiProperty({
+        example: 1,
+        description: 'Nível do usuário',
     })
     @IsInt()
     nivel: number;

@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/global/prisma/prisma.service';
+import { DefaultReturn } from 'src/global/types/defaultreturn';
 import { CreateStreamingDTO } from './dto/create-streaming.dto';
 import { ReturnStreamingDTO } from './dto/return-streaming.dto';
 
@@ -9,7 +10,7 @@ export class StreamingService {
 
     async createStreaming(
         createStreaming: CreateStreamingDTO,
-    ): Promise<{ message: string }> {
+    ): Promise<DefaultReturn> {
 
         try {
             await this.prisma.streaming.create({ data: createStreaming });
@@ -40,6 +41,12 @@ export class StreamingService {
         });
     }
 
+    async getStreamingById(streamingId: number): Promise<ReturnStreamingDTO> {
+        return await this.prisma.streaming.findFirst({
+            where: { id: streamingId },
+        });
+    }
+
     async updateStreamingPrice(
         name: string,
         price: number,
@@ -50,26 +57,25 @@ export class StreamingService {
         });
     }
 
-    async deleteStreamingByName(name: string): Promise<{ message: string }> {
+    async deleteStreamingByName(name: string): Promise<DefaultReturn> {
+        const streaming = await this.getStreamingByName(name);
+
+        if (!streaming) {
+            throw new HttpException('Streaming not found', HttpStatus.NOT_FOUND);
+        }
 
         try {
-            const streaming = await this.getStreamingByName(name);
-
-            if (!streaming) {
-                throw new HttpException('Streaming not found', HttpStatus.NOT_FOUND);
-            }
-
             await this.prisma.streaming.delete({
                 where: { name },
             });
-
-            return { message: 'Streaming deleted successfully' };
         } catch (error) {
             throw new HttpException(
                 'An error occurred while deleting the streaming',
                 HttpStatus.INTERNAL_SERVER_ERROR,
             );
         }
+
+        return { message: 'Streaming deleted successfully' };
     }
 
 }

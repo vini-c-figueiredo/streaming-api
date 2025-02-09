@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserLevel } from 'src/global/decorators/user-level.decorator';
+import { DefaultReturn } from 'src/global/types/defaultreturn';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { ReturnUserDTO } from './dto/return-user.dto';
 import { UserService } from './user.service';
@@ -13,7 +14,7 @@ export class UserController {
   @Post()
   @HttpCode(201)
   @UserLevel(2)
-  async createUser(@Body() dataUser: CreateUserDTO): Promise<{ message: string }> {
+  async createUser(@Body() dataUser: CreateUserDTO): Promise<DefaultReturn> {
     const response = await this.userService.createUser(dataUser);
 
     return response;
@@ -40,7 +41,7 @@ export class UserController {
   @Delete(':id')
   @HttpCode(200)
   @UserLevel(2)
-  async deleteUser(@Param('id') id: string): Promise<{ message: string }> {
+  async deleteUser(@Param('id') id: string): Promise<DefaultReturn> {
     return await this.userService.deleteUserById(id);
   }
 }

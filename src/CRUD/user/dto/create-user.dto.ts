@@ -3,7 +3,7 @@ import { IsEmail, IsInt, IsNotEmpty, IsString, Max, Min, MinLength } from "class
 
 export class CreateUserDTO {
     @ApiProperty({
-        description: 'name User',
+        description: 'nome do usuário',
     })
     @IsString()
     @MinLength(2)
@@ -11,28 +11,28 @@ export class CreateUserDTO {
     name: string;
 
     @ApiProperty({
-        description: 'email User',
+        description: 'email do usuário',
     })
     @IsEmail()
     @IsNotEmpty()
     email: string;
 
     @ApiProperty({
-        description: 'phone User',
+        description: 'phone do usuário',
     })
     @IsString()
     @IsNotEmpty()
     phone: string;
 
     @ApiProperty({
-        description: 'password User',
+        description: 'senha do usuário',
     })
     @IsString()
     @IsNotEmpty()
     password: string;
 
     @ApiProperty({
-        description: 'level User',
+        description: 'nivel do usuário',
     })
     @IsInt()
     @Min(1, { message: "The level must be at least 1." })

@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserLevel } from 'src/global/decorators/user-level.decorator';
+import { DefaultReturn } from 'src/global/types/defaultreturn';
 import { CreateStreamingDTO } from './dto/create-streaming.dto';
 import { ReturnStreamingDTO } from './dto/return-streaming.dto';
 import { StreamingService } from './streaming.service';
@@ -13,30 +14,34 @@ export class StreamingController {
   @Post()
   @HttpCode(201)
   @UserLevel(2)
-  async CreateStreaming(
+  async createStreaming(
     @Body() createStreamingDTO: CreateStreamingDTO,
-  ): Promise<{ message: string }> {
+  ): Promise<DefaultReturn> {
     return await this.streamingService.createStreaming(createStreamingDTO);
   }
 
   @Get()
   @HttpCode(200)
   @UserLevel(1)
-  async getAllStreaming(): Promise<ReturnStreamingDTO[]> {
-    return await this.streamingService.getAllStreaming();
-  }
+  async getUsers(@Query('name') name?: string, @Query('id') id?: number): Promise<ReturnStreamingDTO | ReturnStreamingDTO[] | null> {
+    if (name && id) {
+      throw new HttpException('You must provide either an email or an id, not both.', HttpStatus.BAD_REQUEST);
+    }
 
-  @Get(':name')
-  @HttpCode(200)
-  @UserLevel(1)
-  async getStreamingByName(@Param('name') name: string): Promise<ReturnStreamingDTO> {
-    return await this.streamingService.getStreamingByName(name);
+    if (name) {
+      return await this.streamingService.getStreamingByName(name)
+    };
+    if (id) {
+      return await this.streamingService.getStreamingById(id)
+    };
+
+    return await this.streamingService.getAllStreaming();
   }
 
   @Patch(':name')
   @HttpCode(200)
   @UserLevel(2)
-  async UpdateStreamingPrice(
+  async updateStreamingPrice(
     @Param('name') name: string,
     @Body() Price: number,
   ): Promise<ReturnStreamingDTO> {
@@ -46,7 +51,7 @@ export class StreamingController {
   @Delete(':name')
   @HttpCode(200)
   @UserLevel(2)
-  async deleteStreamingByName(@Param('name') name: string): Promise<{ message: string }> {
+  async deleteStreamingByName(@Param('name') name: string): Promise<DefaultReturn> {
     return await this.streamingService.deleteStreamingByName(name);
   }
 }

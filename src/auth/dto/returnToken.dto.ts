@@ -7,7 +7,7 @@ export class returnTokenDTO {
     access_token: string
 
     @ApiProperty({
-        description: 'id User',
+        description: 'id do usuário',
     })
     id: string
 }
